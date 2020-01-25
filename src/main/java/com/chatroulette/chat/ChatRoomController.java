@@ -26,7 +26,7 @@ public class ChatRoomController {
     @MessageMapping("/chat/{roomId}/sendMessage")
     public void sendMessage(@DestinationVariable String roomId, @Payload Message chatMessage) {
         logger.info(roomId + "Vote added for " + chatMessage.getContent() + " by " + chatMessage.getSender());
-        votingService.addVoteToPlayer(roomId, chatMessage.getSender(), chatMessage.getContent(), chatMessage.getAnswer());
+        votingService.addVoteToPlayer(roomId, chatMessage);
         chatMessage.setContent("Vote received from " + chatMessage.getSender());
         messagingTemplate.convertAndSend(format("/chat-room/%s", roomId), chatMessage);
     }

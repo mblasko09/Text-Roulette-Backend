@@ -1,5 +1,6 @@
 package com.chatroulette.chat;
 
+import com.chatroulette.chat.service.VotingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,13 @@ public class ChatRoomController {
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
 
+    @Autowired
+    private VotingService votingService;
+
     @MessageMapping("/chat/{roomId}/sendMessage")
     public void sendMessage(@DestinationVariable String roomId, @Payload Message chatMessage) {
-        //logger.info(roomId+" Chat messahe recieved is "+chatMessage.getContent());
         logger.info(roomId + "Vote added for " + chatMessage.getContent() + " by " + chatMessage.getSender());
-
+        votingService.addVoteToPlayer(roomId, chatMessage);
         chatMessage.setContent("Vote received from " + chatMessage.getSender());
         messagingTemplate.convertAndSend(format("/chat-room/%s", roomId), chatMessage);
     }

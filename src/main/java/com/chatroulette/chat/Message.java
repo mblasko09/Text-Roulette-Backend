@@ -6,9 +6,11 @@ public class Message {
         CHAT, JOIN, LEAVE
     }
 
+    // Content = vote
     private MessageType messageType;
     private String content;
     private String sender;
+    private String answer;
 
     public MessageType getType() {
         return messageType;
@@ -33,4 +35,9 @@ public class Message {
     public void setSender(String sender) {
         this.sender = sender;
     }
+
+    public String getAnswer() { return answer; }
+
+    public void setAnswer(String answer) { this.answer = answer; }
+
 }

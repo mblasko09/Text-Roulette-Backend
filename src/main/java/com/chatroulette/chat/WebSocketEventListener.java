@@ -2,6 +2,7 @@ package com.chatroulette.chat;
 
 import static java.lang.String.format;
 
+import com.chatroulette.chat.entities.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,7 +2,9 @@ package com.chatroulette.chat;
 
 import com.chatroulette.chat.entities.Message;
 import com.chatroulette.chat.entities.PlayerData;
-import com.chatroulette.chat.service.VotingService;
+import com.chatroulette.chat.entities.TweetData;
+import com.chatroulette.chat.service.MessageStoreService;
+import com.chatroulette.chat.service.TwitterEngineService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +34,15 @@ public class ChatRoomController {
     private SimpMessageSendingOperations messagingTemplate;
 
     @Autowired
-    private VotingService votingService;
+    private MessageStoreService messageStoreService;
+
+    @Autowired
+    private TwitterEngineService twitterEngineService;
 
     @MessageMapping("/chat/{roomId}/sendMessage")
     public void sendMessage(@DestinationVariable String roomId, @Payload Message chatMessage) {
         logger.info(roomId + "Vote added for " + chatMessage.getContent() + " by " + chatMessage.getSender());
-        votingService.addVoteToPlayer(roomId, chatMessage);
+        messageStoreService.addVoteToPlayer(roomId, chatMessage);
         chatMessage.setContent("Vote received from " + chatMessage.getSender());
         messagingTemplate.convertAndSend(format("/chat-room/%s", roomId), chatMessage);
     }
@@ -59,8 +64,8 @@ public class ChatRoomController {
             leaveMessage.setSender(chatMessage.getSender());
             messagingTemplate.convertAndSend(format("/chat-room/%s", currentRoomId), leaveMessage);
         }
-        votingService.setGroup(roomId, chatMessage.getSender());
-        votingService.getPlayerScores(roomId);
+        messageStoreService.setGroup(roomId, chatMessage.getSender());
+        messageStoreService.getPlayerScores(roomId);
         headerAccessor.getSessionAttributes().put("name", chatMessage.getSender());
         messagingTemplate.convertAndSend(format("/chat-room/%s", roomId), chatMessage);
     }
@@ -69,11 +74,21 @@ public class ChatRoomController {
     public ResponseEntity<List<PlayerData>> getPlayerScores(@RequestParam String roomId) {
         List<PlayerData> playerScores = new ArrayList<>();
         try {
-            playerScores = votingService.getPlayerScores(roomId);
+            playerScores = messageStoreService.getPlayerScores(roomId);
             return new ResponseEntity<>(playerScores, HttpStatus.OK);
         } catch (Exception e) {
             logger.info(e.getMessage());
-            return  new ResponseEntity<>(playerScores, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(playerScores, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/chat/getAllTweetData/{roomId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<TweetData>> getTweetData(@RequestParam String roomId) {
+        List<TweetData> tweetData = new ArrayList<>();
+        try {
+            return new ResponseEntity<>(tweetData, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(tweetData, HttpStatus.BAD_REQUEST);
         }
     }
 }

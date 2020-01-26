@@ -11,6 +11,7 @@ public class Message {
     private String content;
     private String sender;
     private String answer;
+    private String handle;
 
     public MessageType getType() {
         return messageType;
@@ -39,5 +40,9 @@ public class Message {
     public String getAnswer() { return answer; }
 
     public void setAnswer(String answer) { this.answer = answer; }
+
+    public String getHandle() { return this.handle; }
+
+    public void setHandle(String handle) { this.handle = handle; }
 
 }

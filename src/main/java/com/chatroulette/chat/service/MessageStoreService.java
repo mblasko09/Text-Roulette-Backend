@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class VotingService {
+public class MessageStoreService {
 
     private SimpleMessageStore messageStore;
 
-    public VotingService() {
+    public MessageStoreService() {
         messageStore = new SimpleMessageStore();
     }
 

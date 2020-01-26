@@ -20,12 +20,9 @@ public class MessageStoreService {
     public void addVoteToPlayer(String roomId, com.chatroulette.chat.entities.Message mes) {
         Message message = new GenericMessage<>(mes.getContent());
         Message player = new GenericMessage<>(mes.getSender());
-        System.out.println("Message: " + mes.getContent());
         String playerId = roomId + mes.getSender();
         if (mes.getContent().equalsIgnoreCase(mes.getContent())) { //TODO Need to change to work with mes.getAnswer()
             messageStore.addMessageToGroup(playerId, message);
-            System.out.println(playerId);
-            System.out.println("Score!!!! " + messageStore.getMessageGroup(playerId).size());
         }
     }
 
@@ -38,8 +35,8 @@ public class MessageStoreService {
         List<PlayerData> playerData = new ArrayList<>();
         for (Message message : messageStore.getMessageGroup(roomId).getMessages()) {
             String curPlayer = message.getPayload().toString();
-            int curPlayerScore = messageStore.getMessageGroup(curPlayer).size();
-            System.out.println("Score " + curPlayerScore);
+            int curPlayerScore = messageStore.getMessageGroup(roomId+curPlayer).size();
+            System.out.println(curPlayer + "'s score: " + curPlayerScore);
             PlayerData playerData1 = new PlayerData(curPlayer, curPlayerScore);
             playerData.add(playerData1);
         }

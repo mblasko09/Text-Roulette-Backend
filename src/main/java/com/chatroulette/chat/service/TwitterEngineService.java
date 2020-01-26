@@ -12,6 +12,10 @@ public class TwitterEngineService {
         tweetData = new TweetData();
     }
 
+    public TwitterEngineService(String tweet, String handle) {
+        tweetData = new TweetData(tweet, handle);
+    }
+
     public TweetData getTweetData() {
         return this.tweetData;
     }

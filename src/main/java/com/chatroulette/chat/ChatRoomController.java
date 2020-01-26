@@ -65,7 +65,6 @@ public class ChatRoomController {
             messagingTemplate.convertAndSend(format("/chat-room/%s", currentRoomId), leaveMessage);
         }
         messageStoreService.setGroup(roomId, chatMessage.getSender());
-        messageStoreService.getPlayerScores(roomId);
         headerAccessor.getSessionAttributes().put("name", chatMessage.getSender());
         messagingTemplate.convertAndSend(format("/chat-room/%s", roomId), chatMessage);
     }
@@ -83,8 +82,10 @@ public class ChatRoomController {
     }
 
     @RequestMapping(value = "/chat/getAllTweetData/{roomId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<TweetData>> getTweetData(@RequestParam String roomId) {
+    public ResponseEntity<List<TweetData>> getTweetData(@RequestParam String roomId) { // This will be a list of handles
         List<TweetData> tweetData = new ArrayList<>();
+        twitterEngineService.setTweetData("Test Tweet", "Test handle");
+        tweetData.add(twitterEngineService.getTweetData());
         try {
             return new ResponseEntity<>(tweetData, HttpStatus.OK);
         } catch (Exception e) {

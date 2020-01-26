@@ -65,6 +65,7 @@ public class ChatRoomController {
             messagingTemplate.convertAndSend(format("/chat-room/%s", currentRoomId), leaveMessage);
         }
         messageStoreService.setGroup(roomId, chatMessage.getSender());
+        messageStoreService.getHandles(roomId);
         headerAccessor.getSessionAttributes().put("name", chatMessage.getSender());
         messagingTemplate.convertAndSend(format("/chat-room/%s", roomId), chatMessage);
     }
@@ -90,6 +91,17 @@ public class ChatRoomController {
             return new ResponseEntity<>(tweetData, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(tweetData, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/chat/getHandles/{roomId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> getHandles(@RequestParam String roomId) {
+        List<String> handles = new ArrayList<>();
+        try {
+            handles = messageStoreService.getHandles(roomId);
+            return new ResponseEntity<>(handles, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(handles, HttpStatus.BAD_REQUEST);
         }
     }
 }

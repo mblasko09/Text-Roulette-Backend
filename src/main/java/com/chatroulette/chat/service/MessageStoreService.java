@@ -1,6 +1,8 @@
 package com.chatroulette.chat.service;
 
 import com.chatroulette.chat.entities.PlayerData;
+import javafx.util.Pair;
+import org.springframework.integration.store.MessageGroup;
 import org.springframework.integration.store.SimpleMessageStore;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
@@ -27,8 +29,18 @@ public class MessageStoreService {
     }
 
     public void setGroup(String roomId, String playerId) {
-        Message player = new GenericMessage<>(playerId);
-        messageStore.addMessageToGroup(roomId, player);
+        Pair<String, String> idAndHandle = new Pair<>(playerId, "test handle");
+        Message playerAndHandle = new GenericMessage<>(idAndHandle);
+        messageStore.addMessageToGroup(roomId, playerAndHandle);
+    }
+
+    public List<String> getHandles(String roomId) {
+        List<String> handles = new ArrayList<>();
+        MessageGroup messageGroup = messageStore.getMessageGroup(roomId);
+        for (Message message : messageGroup.getMessages()) {
+            handles.add(message.getPayload().toString());
+        }
+        return handles;
     }
 
     public List<PlayerData> getPlayerScores(String roomId) {

@@ -17,12 +17,14 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static java.lang.String.format;
 
@@ -43,7 +45,11 @@ public class ChatRoomController {
     public void sendMessage(@DestinationVariable String roomId, @Payload Message chatMessage) {
         logger.info(roomId + "Vote added for " + chatMessage.getContent() + " by " + chatMessage.getSender());
         messageStoreService.addVoteToPlayer(roomId, chatMessage);
-        chatMessage.setContent("Vote received from " + chatMessage.getSender());
+        //chatMessage.setContent("Vote received from " + chatMessage.getSender());
+        List<String> tweet = twitterEngineService.getTweetData();
+        Random rand = new Random();
+        int val = rand.nextInt(10);
+        chatMessage.setContent("Tweet " + tweet.get(val));
         messagingTemplate.convertAndSend(format("/chat-room/%s", roomId), chatMessage);
     }
 
@@ -82,11 +88,12 @@ public class ChatRoomController {
         }
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/chat/getAllTweetData/{roomId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TweetData>> getTweetData(@RequestParam String roomId) { // This will be a list of handles
         List<TweetData> tweetData = new ArrayList<>();
         twitterEngineService.setTweetData("Test Tweet", "Test handle");
-        tweetData.add(twitterEngineService.getTweetData());
+        //tweetData.add(twitterEngineService.getTweetData());
         try {
             return new ResponseEntity<>(tweetData, HttpStatus.OK);
         } catch (Exception e) {

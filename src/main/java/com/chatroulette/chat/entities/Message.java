@@ -1,4 +1,4 @@
-package com.chatroulette.chat;
+package com.chatroulette.chat.entities;
 
 public class Message {
 
